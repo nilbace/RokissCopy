@@ -5,25 +5,32 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float _speed = 10.0f;
-    bool _moveToDest = false;
     Vector3 _destPoz;
     Animator _anim;
     void Start()
     {
         _anim = GetComponent<Animator>();
-        Managers.input.KeyAction -= OnKeyBoard;
-        Managers.input.KeyAction += OnKeyBoard;
         Managers.input.MouseAction -= OnMouseClicked;
         Managers.input.MouseAction += OnMouseClicked;
     }
 
-    private void Update() {
-        if(_moveToDest)
-        {
-            Vector3 dir = _destPoz - transform.position;
+    public enum PlayerState{
+        Die,
+        Moving,
+        Idle,
+    }
+    PlayerState _state = PlayerState.Idle;
+    void UpdateDie()
+    {
+
+    }
+
+    void UpdateMoving()
+    {
+        Vector3 dir = _destPoz - transform.position;
             if(dir.magnitude < 0.01f)
             {
-                _moveToDest = false;
+                _state = PlayerState.Idle;
             }
             else
             {
@@ -31,57 +38,39 @@ public class PlayerController : MonoBehaviour
                 transform.position = transform.position + dir.normalized*_speed*Time.deltaTime;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 10*Time.deltaTime);
             }
-        }
 
-        if(_moveToDest)
-        {
-            _anim.Play("Run");
-        }
-        else
-        {
-            _anim.Play("Wait");
-        }
+       _anim.SetFloat("speed", _speed);
     }
 
-    void OnKeyBoard()
+    void UpdateIdle()
     {
-        if(Input.GetKey(KeyCode.W))
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, 
-                Quaternion.LookRotation(Vector3.forward), 0.09f);
-            transform.position += Vector3.forward*Time.deltaTime*_speed;
-        }
+        _anim.SetFloat("speed", 0f);
+    }
 
-        if(Input.GetKey(KeyCode.S))
+    private void Update() {
+        
+        switch(_state)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, 
-                Quaternion.LookRotation(Vector3.back), 0.09f);
-            transform.position += Vector3.back*Time.deltaTime*_speed;
-        }
+            case PlayerState.Die:
+                UpdateDie();
+                break;
 
-        if(Input.GetKey(KeyCode.A))
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, 
-                Quaternion.LookRotation(Vector3.left), 0.09f);
-            transform.position += Vector3.left*Time.deltaTime*_speed;
-        }
+            case PlayerState.Moving:
+                UpdateMoving();
+                break;
 
-        if(Input.GetKey(KeyCode.D))
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, 
-                Quaternion.LookRotation(Vector3.right), 0.09f);
-            transform.position += Vector3.right*Time.deltaTime*_speed;
+            case PlayerState.Idle:
+                UpdateIdle();
+                break;
+            
         }
-
-        _moveToDest = false;
     }
 
 
     void OnMouseClicked(Define.MouseEvent evt)
     {
-        /* if(evt != Define.MouseEvent.Click)
+        if(_state == PlayerState.Die)
             return;
- */
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(Camera.main.transform.position, ray.direction*100f, Color.red, 1.0f);
@@ -90,7 +79,7 @@ public class PlayerController : MonoBehaviour
         if(Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Wall")))
         {
             _destPoz = hit.point;
-            _moveToDest = true;
+            _state = PlayerState.Moving;
         }
     }
 }
