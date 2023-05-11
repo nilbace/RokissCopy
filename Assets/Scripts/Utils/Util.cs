@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Util{
+
+    public static T GetOrAddComponent<T>(GameObject go) where T : UnityEngine.Component
+    {
+        T component = go.GetComponent<T>();
+        if(component == null)
+            component = go.AddComponent<T>();
+        return component;
+    }
+
+
     public static T FindChild<T>(GameObject go, string name = null, bool recursive = false) where T : UnityEngine.Object
     {
         if(go == null)
@@ -27,13 +37,20 @@ public class Util{
             {
                 if(string.IsNullOrEmpty(name) || component.name == name)
                 {
-                    Debug.Log(component.name);
-                    Debug.Log(name);
                     return component;
                 }
             }
         }
 
         return null;
+    }
+
+    public static GameObject FindChild(GameObject go, string name = null, bool recursive = false)
+    {
+        Transform transform = FindChild<Transform>(go, name, recursive);
+        if(transform==null)
+            return null;
+
+        return transform.gameObject;
     }
 }
