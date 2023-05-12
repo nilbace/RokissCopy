@@ -16,6 +16,8 @@ public class UI_Manager
         GameObject go = Managers.Resource.Instantiate($"UI/Popup/{name}");
         T popup = Util.GetOrAddComponent<T>(go);
         _popupStack.Push(popup);
+        _order++;
+
         return popup;
     }
 
@@ -26,5 +28,8 @@ public class UI_Manager
 
         UI_Popup popup = _popupStack.Pop();
         Managers.Resource.Destroy(popup.gameObject);
+        popup = null;
+
+        _order--;
     }
 }
