@@ -6,7 +6,7 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class UI_Button : UI_Base
+public class UI_Button : UI_Popup
 {   
     enum Buttons{
         PointButton,
@@ -31,7 +31,7 @@ public class UI_Button : UI_Base
         Bind<GameObject>(typeof(GameObjects));
         Bind<Image>(typeof(Images));
 
-        GetText((int)Texts.ScoreText).text = "Bind Test";
+        GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonClicked);
 
         GameObject go = GetImage((int)Images.ItemIcon).gameObject;
         AddUIEvent(go, (PointerEventData data) => { go.transform.position = data.position; } , Define.UIEvent.Drag);
@@ -53,6 +53,11 @@ public class UI_Button : UI_Base
         }
     }
 
+    public void OnButtonClicked(PointerEventData data)
+    {
+        _score++;
+        GetText((int)Texts.ScoreText).text = "점수 " + _score;
+    }
     
 
     int _score = 0;
