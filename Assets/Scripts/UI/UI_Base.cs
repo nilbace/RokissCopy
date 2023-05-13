@@ -6,9 +6,28 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_Base : MonoBehaviour
+public abstract class UI_Base : MonoBehaviour
 {
     protected Dictionary<Type, UnityEngine.Object[]> _objeects = new Dictionary<Type, UnityEngine.Object[]>();
+
+    public abstract void Init();
+    
+
+    protected void Bind<T>(Type type) where T : UnityEngine.Object
+    {
+        string[] names = Enum.GetNames(type);
+
+        UnityEngine.Object[] objects = new UnityEngine.Object[names.Length];
+        _objeects.Add(typeof(T), objects);
+
+        for(int i = 0; i < names.Length; i++)
+        {
+            if(typeof(T)==typeof(GameObject))
+                objects[i] = Util.FindChild(gameObject, names[i], true);
+            else
+                objects[i] = Util.FindChild<T>(gameObject, names[i], true);
+        }
+    }
     protected T Get<T>(int idx) where T : UnityEngine.Object
     {
         UnityEngine.Object[] objects = null;
@@ -16,6 +35,11 @@ public class UI_Base : MonoBehaviour
             return null;
 
         return objects[idx] as T;
+    }
+
+    protected GameObject GetGameObject(int idx)
+    {
+        return Get<GameObject>(idx);
     }
 
     protected TMP_Text GetText(int idx)
@@ -33,7 +57,7 @@ public class UI_Base : MonoBehaviour
         return Get<Image>(idx);
     }
 
-    public static void AddUIEvent(GameObject go, Action<UnityEngine.EventSystems.PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    public static void BindEvent(GameObject go, Action<UnityEngine.EventSystems.PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
     {
         UI_EventHandler evt = Util.GetOrAddComponent<UI_EventHandler>(go);
 

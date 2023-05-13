@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class UI_Popup : UI_Base
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Init()
     {
-        
+        Managers.UI_Manager.SetCanavas(gameObject, true);
     }
 
-    // Update is called once per frame
-    void Update()
+    public virtual void ClosePopupUI()
     {
-        
+        Managers.UI_Manager.ClosePopupUI(this);
     }
 }

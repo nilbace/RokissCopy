@@ -12,8 +12,6 @@ public class PlayerController : MonoBehaviour
         _anim = GetComponent<Animator>();
         Managers.input.MouseAction -= OnMouseClicked;
         Managers.input.MouseAction += OnMouseClicked;
-
-        Managers.UI_Manager.ShowPopupUI<UI_Button>();
     }
 
     public enum PlayerState{
