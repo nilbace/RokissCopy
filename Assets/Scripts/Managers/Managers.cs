@@ -45,6 +45,7 @@ public class Managers : MonoBehaviour
             s_instance = go.GetComponent<Managers>();
 
             s_instance._sound.Init();
+            s_instance._pool.Init();
         }
     }
 
@@ -54,5 +55,7 @@ public class Managers : MonoBehaviour
         Input.Clear();
         Scene.Clear();
         UI_Manager.Clear();
+        
+        Pool.Clear();
     }
 }
