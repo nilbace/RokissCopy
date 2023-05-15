@@ -102,4 +102,15 @@ public class UI_Manager
 
         _order--;
     }
+
+    public void CloseALlPopupUI()
+    {
+        while(_popupStack.Count>0)
+            ClosePopupUI();
+    }
+
+    public void Clear()
+    {
+        CloseALlPopupUI();
+    }
 }

@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _anim = GetComponent<Animator>();
-        Managers.input.MouseAction -= OnMouseClicked;
-        Managers.input.MouseAction += OnMouseClicked;
+        Managers.Input.MouseAction -= OnMouseClicked;
+        Managers.Input.MouseAction += OnMouseClicked;
     }
 
     public enum PlayerState{
